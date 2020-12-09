@@ -1,4 +1,4 @@
-import { serve, Server } from "https://deno.land/std@0.80.0/http/server.ts";
+import { serve, Server, ServerRequest } from "https://deno.land/std@0.80.0/http/server.ts";
 import { ControllerMetadata, MethodOptions } from "./types.ts";
 import { ParseUtils } from "./utils/parse.utils.ts";
 import { ReflectUtils } from "./utils/reflect.utils.ts";
@@ -10,14 +10,17 @@ export interface AsteroidApplicationOptions {
 
 export class AsteroidApplication {
 
-  private server: Server | undefined;
+  private server: AsyncIterable<ServerRequest> | undefined;
   private routes: Map<string, Function | undefined> = new Map<string, Function | undefined>()
+  private options: AsteroidApplicationOptions = { port: 8080 };
 
-  constructor() {}
+  constructor(options: AsteroidApplicationOptions = { port: 8080 }) {
+    this.options = options
+  }
 
-  async listen(options: AsteroidApplicationOptions) {
-    this.server = serve({ hostname: options.hostname, port: options.port });
-    this.printServerRunning(options);
+  async listen() {
+    this.server = this.newServer();
+    this.printServerRunning();
 
     for await (const request of this.server) {
 
@@ -38,6 +41,10 @@ export class AsteroidApplication {
     }
   }
 
+  close() {
+    (this.server as Server).close()
+  }
+
   addController(controller: any): void {
     const metadata: ControllerMetadata | undefined = ReflectUtils.getControllerMetadata(controller);
     if (metadata !== undefined) {
@@ -55,8 +62,12 @@ export class AsteroidApplication {
     }
   }
 
-  private printServerRunning(options: AsteroidApplicationOptions) {
-    let host = options.hostname ? `http://${options.hostname}:${options.port}/` : `http://localhost:${options.port}/`;
+  private newServer(): AsyncIterable<ServerRequest> {
+    return serve({ hostname: this.options.hostname, port: this.options.port });
+  }
+
+  private printServerRunning() {
+    let host = this.options?.hostname ? `http://${this.options.hostname}:${this.options.port}/` : `http://localhost:${this.options.port}/`;
     console.log(`☄️  ☄️  Asteroid running. Access it at: ${host} ☄️  ☄️\n`);
     for (let key of this.routes.keys()) {
       console.log(`☄️  Added endpoint ${JSON.parse(key).path} with method ${JSON.parse(key).method}`);

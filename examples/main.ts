@@ -5,4 +5,4 @@ const app = new AsteroidApplication();
 
 app.addController(new GetSample());
 
-await app.listen({port: 8080});
+await app.listen();
