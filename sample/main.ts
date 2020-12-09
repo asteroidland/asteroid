@@ -1,8 +1,8 @@
-import { MeteorApplication } from "../src/meteor.ts";
+import { AsteroidApplication } from "../src/asteroid.ts";
 import { GetSample } from "./get-sample.ts";
 
-const app = new MeteorApplication();
+const app = new AsteroidApplication();
 
-app.addHandler(new GetSample());
+app.addController(new GetSample());
 
 await app.listen({port: 8080});

@@ -1,12 +1,13 @@
-import { Handler } from "../src/http/handler.ts";
-import { Get } from "../src/http/route.ts";
+import { Controller } from "../src/decorator/controller.decorator.ts";
+import { Get } from "../src/decorator/method.decorator.ts";
 
-@Handler('test')
+@Controller('test')
 export class GetSample {
   constructor() {}
 
   @Get()
   myRoute() {
+    console.log('Hello World!')
     return 'Hello World!';
   }
 }
