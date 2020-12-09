@@ -7,11 +7,11 @@ export enum HTTPMethod {
 }
 
 export interface MethodOptions {
+    path: string
     method: HTTPMethod,
-    fn: Function
 }
 
 export interface ControllerMetadata {
     prefix: string
-    routes: Map<string, MethodOptions>
+    routes: Map<MethodOptions, Function>
 }

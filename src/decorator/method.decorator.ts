@@ -1,19 +1,17 @@
 import { ControllerMetadata, HTTPMethod, MethodOptions } from "../types.ts";
 import { ReflectUtils } from "../utils/reflect.utils.ts";
 
-// TODO: Criar um map de <(path, method), function>
 export function Get(path?: string): MethodDecorator {
-    return (target: any, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<any>): void => {
+    return (target: Object, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<any>): void => {
         const metadata: ControllerMetadata = ReflectUtils.getControllerMetadata(target) ?? ReflectUtils.getDefaultControllerMetadata();
 
-        // const endpoint: string = path !== undefined ? `${metadata.prefix}/${path}` : `${metadata.prefix}`;
         const endpoint: string = path !== undefined ? path : ''
         const options: MethodOptions = {
-            method: HTTPMethod.GET,
-            fn: descriptor.value
+            path: endpoint,
+            method: HTTPMethod.GET
         };
 
-        metadata.routes.set(endpoint, options);
+        metadata.routes.set(options, descriptor.value);
         ReflectUtils.setControllerMetadata(metadata, target);
     }
 }

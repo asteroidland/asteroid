@@ -8,6 +8,6 @@ export function Controller(path?: string): ClassDecorator {
         const prefix = path !== undefined ? '/' + path : '/';
         metadata.prefix = prefix;
 
-        ReflectUtils.setControllerMetadata(metadata, target);
+        ReflectUtils.setOwnControllerMetadata(metadata, target);
     }
 }
