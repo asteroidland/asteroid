@@ -1,5 +1,5 @@
 import { AsteroidApplication } from "../src/asteroid.ts";
-import { GetSample } from "./get-sample.ts";
+import { GetSample } from "./get-example.ts";
 
 const app = new AsteroidApplication();
 

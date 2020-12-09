@@ -41,6 +41,9 @@ export class AsteroidApplication {
   addController(controller: any): void {
     const metadata: ControllerMetadata | undefined = ReflectUtils.getControllerMetadata(controller);
     if (metadata !== undefined) {
+      if (metadata.routes.size <= 0) {
+        throw new Error('Controller without routes');
+      }
       for (let key of metadata.routes.keys()) {
         const endpoint: string = key.path !== '' ? `${metadata.prefix}/${key.path}` : `${metadata.prefix}`;
         const options: MethodOptions = {
