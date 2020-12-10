@@ -8,9 +8,6 @@ export class ServerMock implements AsyncIterable<ServerRequest> {
   constructor() {}
 
   [Symbol.asyncIterator](): AsyncIterator<ServerRequest> {
-    this.request.url = '/test'
-    this.request.method = 'GET'
-
     // mock request.respond
     this.request.respond = async (r: Response): Promise<void> => {
       this.responseResult = r

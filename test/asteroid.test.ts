@@ -69,9 +69,11 @@ Deno.test(`[${testPackage}] #4 - AsteroidApplication.listen: Should return statu
   }
 
   const server: ServerMock = new ServerMock()
+  server.request.url = '/test'
+  server.request.method = 'GET'
 
-  // Mock app.newServer
   //@ts-ignore
+  // Mock app.newServer
   app.newServer = (): AsyncIterable<ServerRequest> => {
     return server
   }
