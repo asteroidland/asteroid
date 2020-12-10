@@ -57,6 +57,11 @@ export class AsteroidApplication {
           path: endpoint,
           method: key.method
         }
+
+        if (this.routes.has(JSON.stringify(options))) {
+          throw new Error(`The endpoint ${endpoint} with ${key.method} method is duplicated`);
+        }
+        
         this.routes.set(JSON.stringify(options), metadata.routes.get(key));
       }
     }

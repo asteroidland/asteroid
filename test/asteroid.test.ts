@@ -27,7 +27,52 @@ Deno.test(`[${testPackage}] #2 - AsteroidApplication.addController: Should retur
   assertThrows(() => app.addController(new ControllerTest()), undefined, 'Controller without routes');
 });
 
-Deno.test(`[${testPackage}] #3 - AsteroidApplication.addController: Should be success`, () => {
+Deno.test(`[${testPackage}] #3 - AsteroidApplication.addController: Should return throw duplicate endpoint in the same controller`, () => {
+  const app = new AsteroidApplication();
+  assertExists(app);
+  assertEquals(app instanceof AsteroidApplication, true)
+
+  @Controller('test')
+  class ControllerTest {
+    constructor() {}
+
+    @Get('get')
+    GetTest() {}
+
+    @Get('get')
+    GetTest2() {}
+  }
+
+  assertThrows(() => app.addController(new ControllerTest()), undefined, 'The endpoint /test/get with GET method is duplicated');
+});
+
+Deno.test(`[${testPackage}] #4 - AsteroidApplication.addController: Should return throw duplicate endpoint in differents controllers`, () => {
+  const app = new AsteroidApplication();
+  assertExists(app);
+  assertEquals(app instanceof AsteroidApplication, true)
+
+  @Controller('test')
+  class ControllerTest {
+    constructor() {}
+
+    @Get('get')
+    GetTest() {}
+  }
+
+  @Controller('test')
+  class ControllerTest2 {
+    constructor() {}
+
+    @Get('get')
+    GetTest() {}
+  }
+
+  app.addController(new ControllerTest2());
+
+  assertThrows(() => app.addController(new ControllerTest()), undefined, 'The endpoint /test/get with GET method is duplicated');
+});
+
+Deno.test(`[${testPackage}] #5 - AsteroidApplication.addController: Should be success`, () => {
   const app = new AsteroidApplication();
   assertExists(app);
   assertEquals(app instanceof AsteroidApplication, true)
@@ -53,7 +98,7 @@ Deno.test(`[${testPackage}] #3 - AsteroidApplication.addController: Should be su
   assertEquals(routes.has(JSON.stringify(options)), true)
 });
 
-Deno.test(`[${testPackage}] #4 - AsteroidApplication.listen: Should return status 200`, async () => {
+Deno.test(`[${testPackage}] #6 - AsteroidApplication.listen: Should return status 200`, async () => {
   const app = new AsteroidApplication();
   assertExists(app);
   assertEquals(app instanceof AsteroidApplication, true)
