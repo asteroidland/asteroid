@@ -3,6 +3,7 @@ import { assertEquals, assertExists, assertThrows } from 'https://deno.land/std@
 import { AsteroidApplication } from "../src/asteroid.ts";
 import { Controller } from "../src/decorator/controller.decorator.ts";
 import { Get } from "../src/decorator/method.decorator.ts";
+import { HTTPMethod, MethodOptions } from "../src/types.ts";
 import { ServerMock } from "./mock/server.mock.ts";
 
 const testPackage = 'Asteroid'
@@ -26,7 +27,33 @@ Deno.test(`[${testPackage}] #2 - AsteroidApplication.addController: Should retur
   assertThrows(() => app.addController(new ControllerTest()), undefined, 'Controller without routes');
 });
 
-Deno.test(`[${testPackage}] #3 - AsteroidApplication.addController: Should return status 200`, async () => {
+Deno.test(`[${testPackage}] #3 - AsteroidApplication.addController: Should be success`, () => {
+  const app = new AsteroidApplication();
+  assertExists(app);
+  assertEquals(app instanceof AsteroidApplication, true)
+
+  @Controller('test')
+  class ControllerTest {
+    constructor() {}
+
+    @Get('get')
+    GetTest() {}
+  }
+
+  app.addController(new ControllerTest())
+
+  //@ts-ignore
+  const routes = app.routes
+
+  const options: MethodOptions = {
+    path: '/test/get',
+    method: HTTPMethod.GET
+  }
+
+  assertEquals(routes.has(JSON.stringify(options)), true)
+});
+
+Deno.test(`[${testPackage}] #4 - AsteroidApplication.listen: Should return status 200`, async () => {
   const app = new AsteroidApplication();
   assertExists(app);
   assertEquals(app instanceof AsteroidApplication, true)
