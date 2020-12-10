@@ -1,5 +1,5 @@
 import { assert, assertEquals } from "https://deno.land/std@0.80.0/testing/asserts.ts";
-import { HTTPMethod } from '../src/types.ts'
+import { HTTPMethod } from './types.ts'
 
 const testPackage = 'Types'
 

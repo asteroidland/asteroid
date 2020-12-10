@@ -1,10 +1,10 @@
 import { ServerRequest } from "https://deno.land/std@0.80.0/http/server.ts";
 import { assertEquals, assertExists, assertThrows } from 'https://deno.land/std@0.80.0/testing/asserts.ts';
-import { AsteroidApplication } from "../src/asteroid.ts";
-import { Controller } from "../src/decorator/controller.decorator.ts";
-import { Get } from "../src/decorator/method.decorator.ts";
-import { HTTPMethod, MethodOptions } from "../src/types.ts";
-import { ServerMock } from "./mock/server.mock.ts";
+import { AsteroidApplication } from "./asteroid.ts";
+import { Controller } from "./decorator/controller.decorator.ts";
+import { Get } from "./decorator/method.decorator.ts";
+import { HTTPMethod, MethodOptions } from "./types.ts";
+import { ServerMock } from "./test/mock/server.mock.test.ts";
 
 const testPackage = 'Asteroid'
 

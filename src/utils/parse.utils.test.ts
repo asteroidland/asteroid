@@ -1,8 +1,6 @@
 import { assert, assertEquals } from "https://deno.land/std@0.80.0/testing/asserts.ts";
-import { HTTPMethod } from "../../src/types.ts";
-import { ParseUtils } from '../../src/utils/parse.utils.ts';
-
-assert
+import { HTTPMethod } from "../types.ts";
+import { ParseUtils } from './parse.utils.ts';
 
 const testPackage = 'ParseUtils'
 
