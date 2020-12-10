@@ -123,9 +123,85 @@ Deno.test(`[${testPackage}] #6 - AsteroidApplication.listen: Should return statu
     return server
   }
 
+  //@ts-ignore
+  // Mock app.printServerRunning just to not print anything
+  app.printServerRunning = (): void => {}
+
   app.addController(new ControllerTest());
 
   await app.listen()
 
   assertEquals(server.responseResult?.status, 200)
+});
+
+Deno.test(`[${testPackage}] #7 - AsteroidApplication.listen: Should return status 404 due different method`, async () => {
+  const app = new AsteroidApplication();
+  assertExists(app);
+  assertEquals(app instanceof AsteroidApplication, true)
+
+  @Controller('test')
+  class ControllerTest {
+    constructor() {}
+
+    @Get()
+    GetTest() {
+      return '';
+    }
+  }
+
+  const server: ServerMock = new ServerMock()
+  server.request.url = '/test'
+  server.request.method = 'POST'
+
+  //@ts-ignore
+  // Mock app.newServer
+  app.newServer = (): AsyncIterable<ServerRequest> => {
+    return server
+  }
+
+  //@ts-ignore
+  // Mock app.printServerRunning just to not print anything
+  app.printServerRunning = (): void => {}
+
+  app.addController(new ControllerTest());
+
+  await app.listen()
+
+  assertEquals(server.responseResult?.status, 404)
+});
+
+Deno.test(`[${testPackage}] #8 - AsteroidApplication.listen: Should return status 404 due different endpoint`, async () => {
+  const app = new AsteroidApplication();
+  assertExists(app);
+  assertEquals(app instanceof AsteroidApplication, true)
+
+  @Controller('test')
+  class ControllerTest {
+    constructor() {}
+
+    @Get()
+    GetTest() {
+      return '';
+    }
+  }
+
+  const server: ServerMock = new ServerMock()
+  server.request.url = '/test2'
+  server.request.method = 'GET'
+
+  //@ts-ignore
+  // Mock app.newServer
+  app.newServer = (): AsyncIterable<ServerRequest> => {
+    return server
+  }
+
+  //@ts-ignore
+  // Mock app.printServerRunning just to not print anything
+  app.printServerRunning = (): void => {}
+
+  app.addController(new ControllerTest());
+
+  await app.listen()
+
+  assertEquals(server.responseResult?.status, 404)
 });
