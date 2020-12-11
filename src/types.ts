@@ -15,3 +15,7 @@ export interface ControllerMetadata {
     prefix: string
     routes: Map<MethodOptions, Function>
 }
+
+export interface Type<T> {
+    new(...args: any[]): T;
+  }
