@@ -1,4 +1,4 @@
-import { assertEquals, assertNotEquals } from "https://deno.land/std@0.80.0/testing/asserts.ts";
+import { assertEquals, assertNotEquals, assertThrows } from "https://deno.land/std@0.80.0/testing/asserts.ts";
 import { ControllerMetadata, HTTPMethod } from "../types.ts";
 import { ReflectUtils } from "../utils/reflect.utils.ts";
 import { Controller } from "./controller.decorator.ts";

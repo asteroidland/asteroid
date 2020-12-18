@@ -2,10 +2,12 @@ import { Type } from '../types.ts';
 import { Reflect } from '../../lib/Reflect.ts';
 import { DESIGN_PARAMTYPES } from '../constants.ts';
 
-export class Injector extends Map {
+export class Injector {
+
+  private depInstances: Map<string, Type<any>> = new Map<string, Type<any>>()
 
   resolve<T>(target: Type<any>): any {
-    const instance = this.get(target);
+    const instance = this.depInstances.get(target.name);
     if (instance) {
       return instance;
     }
@@ -14,12 +16,12 @@ export class Injector extends Map {
     const injections = tokens.map((token: Type<T>) => this.resolve<Type<T>>(token));
     const newInstance = new target(...injections);
 
-    this.set(target, newInstance);
+    this.depInstances.set(target.name, newInstance);
 
     return newInstance;
   }
 
   release() {
-    this.clear()
+    this.depInstances.clear()
   }
 }

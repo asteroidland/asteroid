@@ -20,7 +20,8 @@ Deno.test(`[${testPackage}] #1 - Create new instances`, () => {
 
 	assertNotEquals(entryClass, null);
 	assertNotEquals(injector, null);
-	assertEquals(injector.size, 2);
+	// @ts-ignore
+	assertEquals(injector.depInstances.size, 2);
 });
 
 Deno.test(`[${testPackage}] #2 - Release new instances`, () => {
@@ -39,9 +40,11 @@ Deno.test(`[${testPackage}] #2 - Release new instances`, () => {
 
 	assertNotEquals(entryClass, null);
 	assertNotEquals(injector, null);
-	assertEquals(injector.size, 2);
+	// @ts-ignore
+	assertEquals(injector.depInstances.size, 2);
 
 	injector.release();
 
-	assertEquals(injector.size, 0);
+	// @ts-ignore
+	assertEquals(injector.depInstances.size, 0);
 });
