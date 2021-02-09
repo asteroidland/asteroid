@@ -9,9 +9,9 @@ The following is a set of guidelines for contributing to Asteroid. It is importa
 
   * [:beetle: Reporting bugs](#beetle-reporting-bugs)
 
-  * [:bulb: Suggesting an enhancement](#bulb-suggesting-a-feature)
+  * [:bulb: Suggesting an enhancement](#bulb-suggesting-an-enhancement)
 
-  * [:octocat: Code contributtion](#-octocat-code-contributtion)
+  * [:octocat: Code contributtion](#octocat-code-contributtion)
 
 [:art: Styleguides](#art-styleguides)
 
@@ -29,7 +29,7 @@ The following is a set of guidelines for contributing to Asteroid. It is importa
 
   If you want to suggest a new feature to Asteroid, follow these steps:
 
-  1. Check if the enhancement was not already implemented, you can check it accessing the [README](https://github.com/asteroidland/asteroid#readme)
+  1. Check if the enhancement was not already implemented, you can check it accessing the [README](https://github.com/asteroidland/asteroid#introduction)
 
   2. If the enhancement was not already implemented, open an [issue](https://github.com/asteroidland/asteroid/issues) that follows the [feature_request.md](https://github.com/asteroidland/asteroid/blob/main/.github/ISSUE_TEMPLATE/feature_request.md) template.
 
@@ -41,7 +41,7 @@ The following is a set of guidelines for contributing to Asteroid. It is importa
 
   * After find out your issue, you can fork the Asteroid project and start to develop the solution. Don't forget to [configure your forked project](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/configuring-a-remote-for-a-fork)
 
-  * Before open a Pull Request, run the tests and check if the code is following the [styleguide](#styleguides)
+  * Before open a Pull Request, run the tests and check if the code is following the [styleguide](#art-styleguides)
 
   * Finally, open a Pull Request following the [pull_request_template.md](https://github.com/asteroidland/asteroid/blob/main/.github/ISSUE_TEMPLATE/pull-request.md) template.
 
@@ -55,4 +55,4 @@ The following is a set of guidelines for contributing to Asteroid. It is importa
 
 Thanks! :hearts:
 
-Eduardo Albuquerque da Silva
+Asteroid team
