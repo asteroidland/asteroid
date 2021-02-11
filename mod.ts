@@ -1,0 +1,1 @@
+export { Module } from "ts-src/decorator/module/decorator.ts";
