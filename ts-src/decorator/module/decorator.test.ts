@@ -29,7 +29,6 @@ Deno.test(`[${testPackage}] - Module with empty values : should throw exception`
  * controllers are just Controllers Decorators;
  * providers are just Injectable Decorators;
  * exports just can use providers in your own module;
- * imports are just Modules Decorators.
  * */
 Deno.test(`[${testPackage}] - Module with values : should be created metadata`, () => {
 
@@ -37,6 +36,9 @@ Deno.test(`[${testPackage}] - Module with values : should be created metadata`, 
 
   class ProviderTest {}
 
+  @Module({
+    controllers: [ControllerTest]
+  })
   class ExportModuleTest {}
 
   @Module({
@@ -56,3 +58,12 @@ Deno.test(`[${testPackage}] - Module with values : should be created metadata`, 
   assertEquals(metadata?.imports, [ExportModuleTest]);
   assertEquals(metadata?.exports, [ProviderTest]);
 });
+
+/**
+ * Tests for Module:
+ * - Check if is all providers from imports are inserted in providers
+ * - Check all throwModuleError:
+ *  - When the first Import is invalid
+ *  - When the second Import is invalid
+ *  - When the third Import is invalid
+ */

@@ -1,5 +1,5 @@
 import { AsteroidReflect } from "../reclect.ts";
-import { ModuleMetadata } from "./metadata.ts";
+import { ModuleMetadata, instanceOfModuleMetadata } from "./metadata.ts";
 
   /**
    * Module is a class decorator with @Module() annotation. This decorator provides ModuleMetadata that allow the Asteroid organize the application structure.
@@ -23,7 +23,7 @@ export function Module(metadata: ModuleMetadata): ClassDecorator {
     moduleMetadata.exports = metadata.exports;
     moduleMetadata.imports = metadata.imports;
 
-    if (isImportsValid(metadata)) {
+    if (isModuleImportsValid(target.name, metadata)) {
       // TODO: put all imports.modules.exports in my own provider
     }
 
@@ -37,9 +37,41 @@ function isModuleMetadataValid(metadata: ModuleMetadata): Boolean {
   const isExportsValid = metadata.exports !== undefined && metadata.exports !== null && metadata.exports?.length > 0;
   const isImportsValid = metadata.imports !== undefined && metadata.imports !== null && metadata.imports?.length > 0;
 
-  return isControllersValid && isProvidersValid && isExportsValid && isImportsValid;
+  return isControllersValid || isProvidersValid || isExportsValid || isImportsValid;
 }
 
-function isImportsValid(metadata: ModuleMetadata): Boolean {
-  return true
+function isModuleImportsValid(moduleName: string, metadata: ModuleMetadata): Boolean {
+  const throwModuleError = (importModuleName: string) => {
+    throw new Error(`Module ${moduleName} is importing wrong Module: ${importModuleName}`);
+  }
+
+  if (metadata.imports !== undefined && metadata.imports.length > 0) {
+    const isImportsValid: Boolean = (metadata.imports as any[]).reduce((previusValue, currentValue) => {
+      if ((previusValue as Boolean) === false) {
+        return false;
+      }
+
+      if ((previusValue as Boolean) === true) {
+
+        if (!instanceOfModuleMetadata((currentValue as Function))) {
+          throwModuleError((currentValue as Function).name);
+        }
+
+        return true
+      }
+
+      if (!instanceOfModuleMetadata((previusValue as Function))) {
+        throwModuleError((previusValue as Function).name);
+      }
+
+      if (!instanceOfModuleMetadata((currentValue as Function))) {
+        throwModuleError((currentValue as Function).name);
+      }
+
+      return true;
+    });
+    return isImportsValid
+  }
+
+  return false
 }
