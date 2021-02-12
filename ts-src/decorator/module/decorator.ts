@@ -23,7 +23,37 @@ export function Module(metadata: ModuleMetadata): ClassDecorator {
     moduleMetadata.exports = metadata.exports;
     moduleMetadata.imports = metadata.imports;
 
-    if (isModuleImportsValid(target.name, metadata)) {
+    if (isModuleImportsValid(target.name, moduleMetadata)) {
+      // INFO: We are using ! due the isModuleImportsValid function guarantee this imports are valid.
+      const providersFromImports: Function[] = moduleMetadata.imports!
+        .map((module) => {
+
+          const importModuleMetadata = AsteroidReflect.getOwnModuleMetadata(module);
+          let providers: Function[] = []
+
+          if (hasModuleMetadataExportValues(importModuleMetadata)) {
+            // INFO: We are using ! due the hasModuleMetadataImportValues function guarantee this imports are valid.
+            providers = [...importModuleMetadata!.exports!]
+          }
+          
+          return providers
+        })
+        .reduce((previusProviders, currentProviders) => {
+          if (currentProviders.length > 0) {
+            currentProviders.forEach(provider => {
+              previusProviders.push(provider);
+            });
+          }
+          return previusProviders;
+        });
+
+        providersFromImports.forEach((provider) => {
+          if (moduleMetadata.providers === undefined) {
+            moduleMetadata.providers = []
+          }
+          moduleMetadata.providers.push(provider)
+        });
+
       // TODO: put all imports.modules.exports in my own provider
     }
 
@@ -31,11 +61,25 @@ export function Module(metadata: ModuleMetadata): ClassDecorator {
   }
 }
 
+function hasModuleMetadataImportValues(metadata: ModuleMetadata | undefined): Boolean {
+  if (metadata === undefined) {
+    return false;
+  }
+  return metadata.imports !== undefined && metadata.imports !== null && metadata.imports?.length > 0;
+}
+
+function hasModuleMetadataExportValues(metadata: ModuleMetadata | undefined): Boolean {
+  if (metadata === undefined) {
+    return false;
+  }
+  return metadata.exports !== undefined && metadata.exports !== null && metadata.exports?.length > 0;
+}
+
 function isModuleMetadataValid(metadata: ModuleMetadata): Boolean {
   const isControllersValid = metadata.controllers !== undefined && metadata.controllers !== null && metadata.controllers?.length > 0;
   const isProvidersValid = metadata.providers !== undefined && metadata.providers !== null && metadata.providers?.length > 0;
-  const isExportsValid = metadata.exports !== undefined && metadata.exports !== null && metadata.exports?.length > 0;
-  const isImportsValid = metadata.imports !== undefined && metadata.imports !== null && metadata.imports?.length > 0;
+  const isExportsValid = hasModuleMetadataExportValues(metadata);
+  const isImportsValid = hasModuleMetadataImportValues(metadata);
 
   return isControllersValid || isProvidersValid || isExportsValid || isImportsValid;
 }
@@ -45,18 +89,18 @@ function isModuleImportsValid(moduleName: string, metadata: ModuleMetadata): Boo
     throw new Error(`Module ${moduleName} is importing wrong Module: ${importModuleName}`);
   }
 
-  if (metadata.imports !== undefined && metadata.imports.length > 0) {
+  if (hasModuleMetadataImportValues(metadata)) {
     const isImportsValid: Boolean = metadata.imports!
-      .map((fn) => {
-        const currentMetadata = AsteroidReflect.getOwnModuleMetadata(fn)
+      .map((module) => {
+        const currentMetadata = AsteroidReflect.getOwnModuleMetadata(module)
         if (!instanceOfModuleMetadata(currentMetadata)) {
-          throwModuleError(fn.name);
+          throwModuleError(module.name);
         }
-        return true
+        return true;
       })
-      .reduce((previusValue, currentValue) => previusValue && currentValue)
-    return isImportsValid
+      .reduce((previusValue, currentValue) => previusValue && currentValue);
+    return isImportsValid;
   }
 
-  return false
+  return false;
 }

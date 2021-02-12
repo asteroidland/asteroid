@@ -59,20 +59,19 @@ Deno.test(`[${testPackage}] - Module with values : should be created metadata`, 
   assertEquals(metadata?.exports, [ProviderTest]);
 });
 
-/**
- * Tests for Module:
- * - Check if is all providers from imports are inserted in providers
- */
-
 Deno.test(`[${testPackage}] - Module with values : should throw module import error when the first import is invalid`, () => {
   assertThrows(() => {
-    class ImportModuleTest {}
+    class ImportModuleTest1 {}
+
+    class ImportModuleTest2 {}
+
+    class ImportModuleTest3 {}
 
     @Module({
-      imports: [ImportModuleTest],
+      imports: [ImportModuleTest1, ImportModuleTest2, ImportModuleTest3],
     })
     class ModuleTest {}
-  }, undefined, 'Module ModuleTest is importing wrong Module: ImportModuleTest')
+  }, undefined, 'Module ModuleTest is importing wrong Module: ImportModuleTest1')
 });
 
 Deno.test(`[${testPackage}] - Module with values : should throw module import error when the second import is invalid`, () => {
@@ -87,8 +86,10 @@ Deno.test(`[${testPackage}] - Module with values : should throw module import er
 
     class ImportModuleTest2 {}
 
+    class ImportModuleTest3 {}
+
     @Module({
-      imports: [ImportModuleTest1, ImportModuleTest2],
+      imports: [ImportModuleTest1, ImportModuleTest2, ImportModuleTest3],
     })
     class ModuleTest {}
   }, undefined, 'Module ModuleTest is importing wrong Module: ImportModuleTest2')
@@ -116,4 +117,27 @@ Deno.test(`[${testPackage}] - Module with values : should throw module import er
     })
     class ModuleTest {}
   }, undefined, 'Module ModuleTest is importing wrong Module: ImportModuleTest3')
+});
+
+Deno.test(`[${testPackage}] - Module with values : should update all providers with new values from import module.providers values`, () => {
+  class ProviderTest {}
+
+  @Module({
+    exports: [ProviderTest]
+  })
+  class ImportModuleTest1 {}
+
+  @Module({
+    imports: [ImportModuleTest1],
+  })
+  class ModuleTest {}
+
+  const metadata: ModuleMetadata | undefined = AsteroidReflect.getOwnModuleMetadata(ModuleTest);
+
+  assertNotEquals(metadata, undefined);
+  assertNotEquals(metadata, null);
+  assertEquals(metadata?.controllers, undefined);
+  assertEquals(metadata?.providers, [ProviderTest]);
+  assertEquals(metadata?.imports, [ImportModuleTest1]);
+  assertEquals(metadata?.exports, undefined);
 });
