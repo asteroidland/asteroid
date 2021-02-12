@@ -46,30 +46,15 @@ function isModuleImportsValid(moduleName: string, metadata: ModuleMetadata): Boo
   }
 
   if (metadata.imports !== undefined && metadata.imports.length > 0) {
-    const isImportsValid: Boolean = (metadata.imports as any[]).reduce((previusValue, currentValue) => {
-      if ((previusValue as Boolean) === false) {
-        return false;
-      }
-
-      if ((previusValue as Boolean) === true) {
-
-        if (!instanceOfModuleMetadata((currentValue as Function))) {
-          throwModuleError((currentValue as Function).name);
+    const isImportsValid: Boolean = metadata.imports!
+      .map((fn) => {
+        const currentMetadata = AsteroidReflect.getOwnModuleMetadata(fn)
+        if (!instanceOfModuleMetadata(currentMetadata)) {
+          throwModuleError(fn.name);
         }
-
         return true
-      }
-
-      if (!instanceOfModuleMetadata((previusValue as Function))) {
-        throwModuleError((previusValue as Function).name);
-      }
-
-      if (!instanceOfModuleMetadata((currentValue as Function))) {
-        throwModuleError((currentValue as Function).name);
-      }
-
-      return true;
-    });
+      })
+      .reduce((previusValue, currentValue) => previusValue && currentValue)
     return isImportsValid
   }
 

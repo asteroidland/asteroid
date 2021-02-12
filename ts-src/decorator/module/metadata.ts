@@ -13,10 +13,13 @@ export interface ModuleMetadata {
  * 
  * @internal
  */
-export function instanceOfModuleMetadata(object: Function | Object): object is ModuleMetadata {
-  let hasControllers = 'controllers' in object;
-  let hasProviders = 'providers' in object;
-  let hasImports = 'imports' in object;
-  let hasExports = 'exports' in object;
-  return hasImports || hasProviders || hasControllers || hasExports;
+export function instanceOfModuleMetadata(object: any ): object is ModuleMetadata {
+  if (object !== undefined) {
+    let hasControllers = 'controllers' in object;
+    let hasProviders = 'providers' in object;
+    let hasImports = 'imports' in object;
+    let hasExports = 'exports' in object;
+    return hasImports || hasProviders || hasControllers || hasExports;
+  }
+  return false;
 }

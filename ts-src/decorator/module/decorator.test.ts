@@ -62,8 +62,58 @@ Deno.test(`[${testPackage}] - Module with values : should be created metadata`, 
 /**
  * Tests for Module:
  * - Check if is all providers from imports are inserted in providers
- * - Check all throwModuleError:
- *  - When the first Import is invalid
- *  - When the second Import is invalid
- *  - When the third Import is invalid
  */
+
+Deno.test(`[${testPackage}] - Module with values : should throw module import error when the first import is invalid`, () => {
+  assertThrows(() => {
+    class ImportModuleTest {}
+
+    @Module({
+      imports: [ImportModuleTest],
+    })
+    class ModuleTest {}
+  }, undefined, 'Module ModuleTest is importing wrong Module: ImportModuleTest')
+});
+
+Deno.test(`[${testPackage}] - Module with values : should throw module import error when the second import is invalid`, () => {
+  assertThrows(() => {
+
+    class ControllerTest {}
+
+    @Module({
+      controllers: [ControllerTest]
+    })
+    class ImportModuleTest1 {}
+
+    class ImportModuleTest2 {}
+
+    @Module({
+      imports: [ImportModuleTest1, ImportModuleTest2],
+    })
+    class ModuleTest {}
+  }, undefined, 'Module ModuleTest is importing wrong Module: ImportModuleTest2')
+});
+
+Deno.test(`[${testPackage}] - Module with values : should throw module import error when the third import is invalid`, () => {
+  assertThrows(() => {
+
+    class ControllerTest {}
+
+    @Module({
+      controllers: [ControllerTest]
+    })
+    class ImportModuleTest1 {}
+
+    @Module({
+      controllers: [ControllerTest]
+    })
+    class ImportModuleTest2 {}
+
+    class ImportModuleTest3 {}
+
+    @Module({
+      imports: [ImportModuleTest1, ImportModuleTest2, ImportModuleTest3],
+    })
+    class ModuleTest {}
+  }, undefined, 'Module ModuleTest is importing wrong Module: ImportModuleTest3')
+});
