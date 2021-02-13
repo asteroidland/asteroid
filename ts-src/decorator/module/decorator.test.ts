@@ -119,7 +119,7 @@ Deno.test(`[${testPackage}] - Module with values : should throw module import er
   }, undefined, 'Module ModuleTest is importing wrong Module: ImportModuleTest3')
 });
 
-Deno.test(`[${testPackage}] - Module with values : should update all providers with new values from import module.providers values`, () => {
+Deno.test(`[${testPackage}] - Module with values : should update all providers with one value from import module.providers values`, () => {
   class ProviderTest {}
 
   @Module({
@@ -138,6 +138,31 @@ Deno.test(`[${testPackage}] - Module with values : should update all providers w
   assertNotEquals(metadata, null);
   assertEquals(metadata?.controllers, undefined);
   assertEquals(metadata?.providers, [ProviderTest]);
+  assertEquals(metadata?.imports, [ImportModuleTest1]);
+  assertEquals(metadata?.exports, undefined);
+});
+
+Deno.test(`[${testPackage}] - Module with values : should update all providers with more than one values from import module.providers values`, () => {
+  class ProviderTest {}
+
+  class ProviderTest2 {}
+
+  @Module({
+    exports: [ProviderTest, ProviderTest2]
+  })
+  class ImportModuleTest1 {}
+
+  @Module({
+    imports: [ImportModuleTest1],
+  })
+  class ModuleTest {}
+
+  const metadata: ModuleMetadata | undefined = AsteroidReflect.getOwnModuleMetadata(ModuleTest);
+
+  assertNotEquals(metadata, undefined);
+  assertNotEquals(metadata, null);
+  assertEquals(metadata?.controllers, undefined);
+  assertEquals(metadata?.providers, [ProviderTest, ProviderTest2]);
   assertEquals(metadata?.imports, [ImportModuleTest1]);
   assertEquals(metadata?.exports, undefined);
 });
