@@ -1,3 +1,4 @@
+import { instanceOfInjectableMetadata } from "../injectable/metadata.ts";
 import { AsteroidReflect } from "../reclect.ts";
 import { ModuleMetadata, instanceOfModuleMetadata } from "./metadata.ts";
 
@@ -53,9 +54,9 @@ export function Module(metadata: ModuleMetadata): ClassDecorator {
           }
           moduleMetadata.providers.push(provider)
         });
-
-      // TODO: put all imports.modules.exports in my own provider
     }
+
+    isProvidersValid(moduleMetadata)
 
     AsteroidReflect.setOwnModuleMetadata(moduleMetadata, target);
   }
@@ -73,6 +74,13 @@ function hasModuleMetadataExportValues(metadata: ModuleMetadata | undefined): Bo
     return false;
   }
   return metadata.exports !== undefined && metadata.exports !== null && metadata.exports?.length > 0;
+}
+
+function hasModuleMetadataProvidersValues(metadata: ModuleMetadata | undefined): Boolean {
+  if (metadata === undefined) {
+    return false;
+  }
+  return metadata.providers !== undefined && metadata.providers !== null && metadata.providers?.length > 0;
 }
 
 function isModuleMetadataValid(metadata: ModuleMetadata): Boolean {
@@ -103,4 +111,14 @@ function isModuleImportsValid(moduleName: string, metadata: ModuleMetadata): Boo
   }
 
   return false;
+}
+
+function isProvidersValid(metadata: ModuleMetadata) {
+  if (hasModuleMetadataProvidersValues(metadata)) {
+    metadata.providers!.forEach(provider => {
+      if (!instanceOfInjectableMetadata(provider)) {
+        throw new Error(`${provider.name} has not Injectable decorator`)
+      }
+    })
+  }
 }

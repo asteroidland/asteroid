@@ -1817,6 +1817,7 @@ import { ModuleMetadata } from "./module/metadata.ts";
 export class AsteroidReflect {
 
   private static MODULE_METADATA: string = 'module:metadata';
+  private static INJECTABLE_METADATA: string = 'injectable:metadata';
 
   /**
    * setOwnModuleMetadata Define a unique Module metadata entry on the target
@@ -1858,5 +1859,29 @@ export class AsteroidReflect {
       exports: [],
     }
     return metadata
+  }
+
+  /**
+   * setOwnInjectableMetadata Set { isInjectable: true } metadata on the target
+   * 
+   * @param target - The target object on which to define Injectable metadata
+   * 
+   * @internal
+   */
+  static setOwnInjectableMetadata(target: Function): void {
+    Reflect.defineMetadata(this.INJECTABLE_METADATA, { isInjectable: true }, target);
+  }
+
+  /**
+   * getOwnInjectableMetadata Gets the ModuleMetadata on the target object
+   * 
+   * @param target - The target object on which the ModuleMetadata is defined
+   * 
+   * @returns - { isInjectable: true } or undefined
+   * 
+   * @internal
+   */
+  static getOwnInjectableMetadata(target: Function): any | undefined {
+    return Reflect.getOwnMetadata(this.INJECTABLE_METADATA, target);
   }
 }
