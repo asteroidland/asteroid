@@ -58,6 +58,8 @@ export function Module(metadata: ModuleMetadata): ClassDecorator {
 
     isProvidersValid(moduleMetadata)
 
+    isExportsValid(moduleMetadata)
+
     AsteroidReflect.setOwnModuleMetadata(moduleMetadata, target);
   }
 }
@@ -85,7 +87,7 @@ function hasModuleMetadataProvidersValues(metadata: ModuleMetadata | undefined):
 
 function isModuleMetadataValid(metadata: ModuleMetadata): Boolean {
   const isControllersValid = metadata.controllers !== undefined && metadata.controllers !== null && metadata.controllers?.length > 0;
-  const isProvidersValid = metadata.providers !== undefined && metadata.providers !== null && metadata.providers?.length > 0;
+  const isProvidersValid = hasModuleMetadataProvidersValues(metadata);
   const isExportsValid = hasModuleMetadataExportValues(metadata);
   const isImportsValid = hasModuleMetadataImportValues(metadata);
 
@@ -120,5 +122,27 @@ function isProvidersValid(metadata: ModuleMetadata) {
         throw new Error(`${provider.name} has not Injectable decorator`)
       }
     })
+  }
+}
+
+function isExportsValid(metadata: ModuleMetadata) {
+  if (hasModuleMetadataExportValues(metadata)) {
+    if (hasModuleMetadataProvidersValues(metadata)) {
+      metadata.exports!.forEach(exportValue => {
+        if (!(metadata.providers!.includes(exportValue))) {
+          throw new Error (`${exportValue.name} can't be exported due is not in providers`)
+        }
+      })
+    } else {
+      let throwMessage = '[';
+
+      metadata.exports!.forEach((exportValue) => {
+        throwMessage = throwMessage + ' ' + exportValue.name;
+      });
+
+      throwMessage = throwMessage + ' ]';
+
+      throw new Error (`${throwMessage} can't be exported due is not in providers`)
+    }
   }
 }

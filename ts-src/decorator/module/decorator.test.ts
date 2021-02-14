@@ -28,7 +28,6 @@ Deno.test(`[${testPackage}] - Module with empty values : should throw exception`
 /** 
  * TODO: We need to guarantee: 
  * controllers are just Controllers Decorators;
- * exports just can use providers in your own module;
  * */
 Deno.test(`[${testPackage}] - Module with values : should be created metadata`, () => {
 
@@ -125,6 +124,7 @@ Deno.test(`[${testPackage}] - Module with values : should update all providers w
   class ProviderTest {}
 
   @Module({
+    providers: [ProviderTest],
     exports: [ProviderTest]
   })
   class ImportModuleTest1 {}
@@ -152,6 +152,7 @@ Deno.test(`[${testPackage}] - Module with values : should update all providers w
   class ProviderTest2 {}
 
   @Module({
+    providers: [ProviderTest, ProviderTest2],
     exports: [ProviderTest, ProviderTest2]
   })
   class ImportModuleTest1 {}
@@ -170,11 +171,6 @@ Deno.test(`[${testPackage}] - Module with values : should update all providers w
   assertEquals(metadata?.imports, [ImportModuleTest1]);
   assertEquals(metadata?.exports, undefined);
 });
-
-
-// * providers are just Injectable Decorators;
-// * Throw if does not have Injectable Decorator
-// * Throw if does not have Injectable Decorator after the imports module
 
 Deno.test(`[${testPackage}] - Module with values : should throw error when providers does not have Injectable decorator`, () => {
   assertThrows(() => {
@@ -200,6 +196,7 @@ Deno.test(`[${testPackage}] - Module with values : should throw error when provi
     class ProviderTest2 {}
   
     @Module({
+      providers: [ProviderTest, ProviderTest2],
       exports: [ProviderTest, ProviderTest2]
     })
     class ImportModuleTest1 {}
@@ -209,4 +206,35 @@ Deno.test(`[${testPackage}] - Module with values : should throw error when provi
     })
     class ModuleTest {}
   }, undefined, "ProviderTest2 has not Injectable decorator")
+})
+
+Deno.test(`[${testPackage}] - Module with values : should throw error when is exporting a value where it is not in providers`, () => {
+  assertThrows(() => {
+    @Injectable()
+    class ProviderTest {}
+    
+    @Injectable()
+    class ProviderTest2 {}
+  
+    @Module({
+      providers: [ProviderTest],
+      exports: [ProviderTest, ProviderTest2]
+    })
+    class ImportModuleTest1 {}
+  }, undefined, "ProviderTest2 can't be exported due is not in providers")
+})
+
+Deno.test(`[${testPackage}] - Module with values : should throw error when is exporting a value where providers is empty`, () => {
+  assertThrows(() => {
+    @Injectable()
+    class ProviderTest {}
+    
+    @Injectable()
+    class ProviderTest2 {}
+  
+    @Module({
+      exports: [ProviderTest, ProviderTest2]
+    })
+    class ImportModuleTest1 {}
+  }, undefined, "[ ProviderTest ProviderTest2 ] can't be exported due is not in providers")
 })
