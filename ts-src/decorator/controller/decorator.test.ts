@@ -1,13 +1,13 @@
 import { assertEquals, assertNotEquals, assertThrows } from "../../deps-test.ts"
-import { Injectable } from "./decorator.ts";
+import { Controller } from "./decorator.ts";
 
-const testPackage = 'Injectable Decorator';
+const testPackage = 'Controller Decorator';
 
 Deno.test(`[${testPackage}] - Should pass`, () => {
   let isThrowing = false;
   try {
-    @Injectable()
-    class InjectableClass {
+    @Controller()
+    class ControllerClass {
       constructor() {}
     }
   } catch (e) {

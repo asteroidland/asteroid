@@ -1818,6 +1818,7 @@ export class AsteroidReflect {
 
   private static MODULE_METADATA: string = 'module:metadata';
   private static INJECTABLE_METADATA: string = 'injectable:metadata';
+  private static CONTROLLER_METADATA: string = 'controller:metadata';
 
   /**
    * setOwnModuleMetadata Define a unique Module metadata entry on the target
@@ -1873,7 +1874,7 @@ export class AsteroidReflect {
   }
 
   /**
-   * getOwnInjectableMetadata Gets the ModuleMetadata on the target object
+   * getOwnInjectableMetadata Gets the InjectableMetadata on the target object
    * 
    * @param target - The target object on which the ModuleMetadata is defined
    * 
@@ -1883,5 +1884,29 @@ export class AsteroidReflect {
    */
   static getOwnInjectableMetadata(target: Function): any | undefined {
     return Reflect.getOwnMetadata(this.INJECTABLE_METADATA, target);
+  }
+
+  /**
+   * setOwnControllerMetadata Set { isController: true } metadata on the target
+   * 
+   * @param target - The target object on which to define Controller metadata
+   * 
+   * @internal
+   */
+  static setOwnControllerMetadata(target: Function): void {
+    Reflect.defineMetadata(this.CONTROLLER_METADATA, { isController: true }, target);
+  }
+
+  /**
+   * getOwnControllerMetadata Gets the ControllerMetadata on the target object
+   * 
+   * @param target - The target object on which the ModuleMetadata is defined
+   * 
+   * @returns - { isController: true } or undefined
+   * 
+   * @internal
+   */
+  static getOwnControllerMetadata(target: Function): any | undefined {
+    return Reflect.getOwnMetadata(this.CONTROLLER_METADATA, target);
   }
 }

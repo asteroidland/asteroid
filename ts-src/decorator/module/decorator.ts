@@ -1,4 +1,5 @@
 import { instanceOfInjectableMetadata } from "../injectable/metadata.ts";
+import { instanceOfControllerMetadata } from "../controller/metadata.ts";
 import { AsteroidReflect } from "../reclect.ts";
 import { ModuleMetadata, instanceOfModuleMetadata } from "./metadata.ts";
 
@@ -23,6 +24,8 @@ export function Module(metadata: ModuleMetadata): ClassDecorator {
     moduleMetadata.providers = metadata.providers;
     moduleMetadata.exports = metadata.exports;
     moduleMetadata.imports = metadata.imports;
+
+    isControllersValid(moduleMetadata);
 
     if (isModuleImportsValid(target.name, moduleMetadata)) {
       // INFO: We are using ! due the isModuleImportsValid function guarantee this imports are valid.
@@ -62,6 +65,13 @@ export function Module(metadata: ModuleMetadata): ClassDecorator {
 
     AsteroidReflect.setOwnModuleMetadata(moduleMetadata, target);
   }
+}
+
+function hasModuleMetadataControllersValues(metadata: ModuleMetadata | undefined): Boolean {
+  if (metadata === undefined) {
+    return false;
+  }
+  return metadata.controllers !== undefined && metadata.controllers !== null && metadata.controllers?.length > 0;
 }
 
 function hasModuleMetadataImportValues(metadata: ModuleMetadata | undefined): Boolean {
@@ -144,5 +154,15 @@ function isExportsValid(metadata: ModuleMetadata) {
 
       throw new Error (`${throwMessage} can't be exported due is not in providers`)
     }
+  }
+}
+
+function isControllersValid(metadata: ModuleMetadata) {
+  if (hasModuleMetadataControllersValues(metadata)) {
+    metadata.controllers!.forEach(controller => {
+      if (!instanceOfControllerMetadata(controller)) {
+        throw new Error(`${controller.name} has not Controller decorator`)
+      }
+    });
   }
 }

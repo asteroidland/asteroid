@@ -3,17 +3,18 @@ import { assertEquals, assertNotEquals, assertThrows } from "../../deps-test.ts"
 import { ModuleMetadata } from "./metadata.ts";
 import { AsteroidReflect } from "../reclect.ts";
 import { Injectable } from "../injectable/decorator.ts";
+import { Controller } from "../controller/decorator.ts";
 
 const testPackage = 'Module Decorator';
 
-Deno.test(`[${testPackage}] - Module empty : should throw exception`, () => {
+Deno.test(`[${testPackage}] - Should throw exception when does not have any field filled out`, () => {
   assertThrows(() => {
     @Module({})
     class ModuleTest {}
   }, undefined, 'Module ModuleTest is empty');
 });
 
-Deno.test(`[${testPackage}] - Module with empty values : should throw exception`, () => {
+Deno.test(`[${testPackage}] - Should throw exception when all fields are empty`, () => {
   assertThrows(() => {
     @Module({
       controllers: [],
@@ -29,8 +30,9 @@ Deno.test(`[${testPackage}] - Module with empty values : should throw exception`
  * TODO: We need to guarantee: 
  * controllers are just Controllers Decorators;
  * */
-Deno.test(`[${testPackage}] - Module with values : should be created metadata`, () => {
+Deno.test(`[${testPackage}] - Should be created metadata`, () => {
 
+  @Controller()
   class ControllerTest {}
 
   @Injectable()
@@ -59,7 +61,7 @@ Deno.test(`[${testPackage}] - Module with values : should be created metadata`, 
   assertEquals(metadata?.exports, [ProviderTest]);
 });
 
-Deno.test(`[${testPackage}] - Module with values : should throw module import error when the first import is invalid`, () => {
+Deno.test(`[${testPackage}] - Should throw module import error when the first import is invalid`, () => {
   assertThrows(() => {
     class ImportModuleTest1 {}
 
@@ -74,9 +76,10 @@ Deno.test(`[${testPackage}] - Module with values : should throw module import er
   }, undefined, 'Module ModuleTest is importing wrong Module: ImportModuleTest1')
 });
 
-Deno.test(`[${testPackage}] - Module with values : should throw module import error when the second import is invalid`, () => {
+Deno.test(`[${testPackage}] - Should throw module import error when the second import is invalid`, () => {
   assertThrows(() => {
 
+    @Controller()
     class ControllerTest {}
 
     @Module({
@@ -95,9 +98,10 @@ Deno.test(`[${testPackage}] - Module with values : should throw module import er
   }, undefined, 'Module ModuleTest is importing wrong Module: ImportModuleTest2')
 });
 
-Deno.test(`[${testPackage}] - Module with values : should throw module import error when the third import is invalid`, () => {
+Deno.test(`[${testPackage}] - Should throw module import error when the third import is invalid`, () => {
   assertThrows(() => {
 
+    @Controller()
     class ControllerTest {}
 
     @Module({
@@ -119,7 +123,7 @@ Deno.test(`[${testPackage}] - Module with values : should throw module import er
   }, undefined, 'Module ModuleTest is importing wrong Module: ImportModuleTest3')
 });
 
-Deno.test(`[${testPackage}] - Module with values : should update all providers with one value from import module.providers values`, () => {
+Deno.test(`[${testPackage}] - Should update all providers with one value from import module.providers values`, () => {
   @Injectable()
   class ProviderTest {}
 
@@ -144,7 +148,7 @@ Deno.test(`[${testPackage}] - Module with values : should update all providers w
   assertEquals(metadata?.exports, undefined);
 });
 
-Deno.test(`[${testPackage}] - Module with values : should update all providers with more than one values from import module.providers values`, () => {
+Deno.test(`[${testPackage}] - Should update all providers with more than one values from import module.providers values`, () => {
   @Injectable()
   class ProviderTest {}
   
@@ -172,7 +176,7 @@ Deno.test(`[${testPackage}] - Module with values : should update all providers w
   assertEquals(metadata?.exports, undefined);
 });
 
-Deno.test(`[${testPackage}] - Module with values : should throw error when providers does not have Injectable decorator`, () => {
+Deno.test(`[${testPackage}] - Should throw error when providers does not have Injectable decorator`, () => {
   assertThrows(() => {
     @Injectable()
     class ProviderTest {}
@@ -188,7 +192,7 @@ Deno.test(`[${testPackage}] - Module with values : should throw error when provi
   }, undefined, "ProviderTest2 has not Injectable decorator")
 })
 
-Deno.test(`[${testPackage}] - Module with values : should throw error when providers does not have Injectable decorator after inserts from imports`, () => {
+Deno.test(`[${testPackage}] - Should throw error when providers does not have Injectable decorator after inserts from imports`, () => {
   assertThrows(() => {
     @Injectable()
     class ProviderTest {}
@@ -208,7 +212,7 @@ Deno.test(`[${testPackage}] - Module with values : should throw error when provi
   }, undefined, "ProviderTest2 has not Injectable decorator")
 })
 
-Deno.test(`[${testPackage}] - Module with values : should throw error when is exporting a value where it is not in providers`, () => {
+Deno.test(`[${testPackage}] - Should throw error when is exporting a value where it is not in providers`, () => {
   assertThrows(() => {
     @Injectable()
     class ProviderTest {}
@@ -224,7 +228,7 @@ Deno.test(`[${testPackage}] - Module with values : should throw error when is ex
   }, undefined, "ProviderTest2 can't be exported due is not in providers")
 })
 
-Deno.test(`[${testPackage}] - Module with values : should throw error when is exporting a value where providers is empty`, () => {
+Deno.test(`[${testPackage}] - Should throw error when is exporting a value where providers is empty`, () => {
   assertThrows(() => {
     @Injectable()
     class ProviderTest {}
@@ -237,4 +241,15 @@ Deno.test(`[${testPackage}] - Module with values : should throw error when is ex
     })
     class ImportModuleTest1 {}
   }, undefined, "[ ProviderTest ProviderTest2 ] can't be exported due is not in providers")
+})
+
+Deno.test(`[${testPackage}] - Should throw error when controllers does not have Controller decorator`, () => {
+  assertThrows(() => {
+    class ControllerTest {}
+  
+    @Module({
+      controllers: [ControllerTest]
+    })
+    class ImportModuleTest1 {}
+  }, undefined, "ControllerTest has not Controller decorator")
 })
